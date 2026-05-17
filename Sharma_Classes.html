@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sharma Classes - Scripting Success Stories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg-primary: #0B0F1C;
+      --bg-secondary: #F4F6FF;
+      --accent: #E11D2E;
+      --accent-hover: #c41828;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8C0E0;
+      --blue-panel: rgba(30, 58, 138, 0.55);
+    }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { font-family: 'Sora', sans-serif; }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: #1E3A8A; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    
+    /* Noise overlay */
+    .noise-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+      opacity: 0.04; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    
+    /* Navigation */
+    .nav-sticky {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+      padding: 1.25rem 0; transition: all 0.3s;
+    }
+    .nav-sticky.scrolled {
+      background: rgba(11, 15, 28, 0.9); backdrop-filter: blur(12px);
+      padding: 0.75rem 0; box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    }
+    .nav-container {
+      max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.75rem;
+      text-decoration: none; color: white;
+    }
+    .nav-logo-icon {
+      width: 40px; height: 40px; background: var(--accent); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.3s;
+    }
+    .nav-logo:hover .nav-logo-icon { transform: scale(1.1); }
+    .nav-logo-text { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a {
+      color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem;
+      font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em;
+      transition: color 0.3s; position: relative;
+    }
+    .nav-links a:hover { color: white; }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+      background: var(--accent); transition: width 0.3s;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .btn-primary {
+      background: var(--accent); color: white; padding: 0.75rem 1.5rem;
+      border-radius: 10px; font-weight: 600; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      text-decoration: none; transition: all 0.3s; font-size: 0.875rem;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover); transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(225, 29, 46, 0.4);
+    }
+    .btn-secondary {
+      border: 2px solid rgba(255,255,255,0.3); color: white; padding: 0.75rem 1.5rem;
+      border-radius: 10px; font-weight: 600; background: transparent; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      text-decoration: none; transition: all 0.3s; font-size: 0.875rem;
+    }
+    .btn-secondary:hover {
+      border-color: white; background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+    .mobile-menu-btn { display: none; background: none; border: none; color: white; cursor: pointer; }
+    .mobile-menu { display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: rgba(11,15,28,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 1.5rem;
+    }
+    .mobile-menu.active { display: block; }
+    .mobile-menu a { display: block; color: rgba(255,255,255,0.8); text-decoration: none;
+      padding: 0.75rem 0; font-weight: 500;
+    }
+    .mobile-menu a:hover { color: white; }
+    
+    @media (max-width: 1024px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .nav-cta { display: none; }
+    }
+    
+    /* Pinned sections */
+    .section-pinned {
+      width: 100vw; height: 100vh; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .section-pinned > .bg-image {
+      position: absolute; inset: 0;
+    }
+    .section-pinned > .bg-image img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .section-pinned > .bg-image .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(11,15,28,0.9) 0%, rgba(11,15,28,0.7) 50%, rgba(11,15,28,0.5) 100%);
+    }
+    
+    /* Blue stage panel */
+    .blue-stage {
+      position: absolute; left: 6vw; top: 12vh; width: 88vw; height: 76vh;
+      background: rgba(30, 58, 138, 0.55); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 34px;
+    }
+    .blue-stage-lg { height: 80vh; top: 10vh; }
+    
+    /* Red ribbon */
+    .red-ribbon {
+      position: absolute; left: 10vw; top: 6vh;
+      min-width: 180px; height: 60px;
+      background: var(--accent); border-radius: 14px;
+      display: flex; align-items: center; padding: 0 1.5rem;
+      z-index: 10;
+    }
+    .red-ribbon span { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.18em; }
+    
+    /* Content layout */
+    .content-wrapper {
+      position: absolute; inset: 0; display: flex; align-items: center;
+    }
+    .content-left { width: 50%; padding: 0 11vw; z-index: 10; }
+    .content-right { width: 50%; height: 100%; position: relative; }
+    
+    @media (max-width: 1024px) {
+      .content-left { width: 100%; padding: 0 2rem; text-align: center; }
+      .content-right { display: none; }
+      .blue-stage { width: 92vw; left: 4vw; }
+      .red-ribbon { left: 6vw; }
+    }
+    
+    /* Typography */
+    .hero-title { font-size: clamp(2.5rem, 5.2vw, 4.875rem); line-height: 0.95; letter-spacing: -0.02em; font-weight: 800; }
+    .section-title { font-size: clamp(2rem, 3.8vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 800; }
+    .text-gradient { background: linear-gradient(135deg, #ffffff 0%, #B8C0E0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .text-secondary { color: var(--text-secondary); }
+    
+    /* Cards */
+    .card-stage { perspective: 1200px; }
+    .card-3d { transform-style: preserve-3d; }
+    .tilted-card { transform: rotateY(-12deg) rotateX(6deg); transition: transform 0.4s ease-out; }
+    .card-shadow { box-shadow: 0 24px 70px rgba(0,0,0,0.35); }
+    
+    /* Student cards */
+    .student-cards-container {
+      position: absolute; left: 8vw; top: 18vh; width: 40vw; height: 60vh;
+      transform-style: preserve-3d;
+    }
+    .student-card {
+      position: absolute; border-radius: 22px; overflow: hidden; card-shadow;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .student-card img { width: 100%; height: 100%; object-fit: cover; }
+    .student-card .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(11,15,28,0.6), transparent);
+    }
+    .sc-1 { top: 0; right: 15%; width: 45%; height: 55%; }
+    .sc-2 { top: 20%; left: 5%; width: 42%; height: 50%; }
+    .sc-3 { bottom: 5%; right: 10%; width: 40%; height: 48%; }
+    
+    /* Course/Subject cards grid */
+    .cards-grid {
+      position: absolute; left: 4vw; top: 16vh; width: 42vw; height: 66vh;
+      transform-style: preserve-3d;
+    }
+    .cards-grid-inner { display: grid; gap: 1rem; height: 100%; }
+    .grid-2x2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .grid-3x2 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .grid-3x1 { grid-template-columns: 1fr 1fr 1fr; }
+    
+    .item-card {
+      position: relative; border-radius: 22px; overflow: hidden; card-shadow;
+      cursor: pointer; border: 1px solid rgba(255,255,255,0.1);
+    }
+    .item-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .item-card:hover img { transform: scale(1.1); }
+    .item-card .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(11,15,28,0.95) 0%, rgba(11,15,28,0.4) 50%, transparent 100%);
+    }
+    .item-card .card-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.25rem; }
+    .item-card .icon-box {
+      width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;
+    }
+    .item-card .icon-box svg { width: 16px; height: 16px; color: white; }
+    
+    /* Testimonial cards */
+    .testimonial-card {
+      background: rgba(11,15,28,0.7); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 22px;
+      padding: 1.5rem; card-shadow; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .testimonial-card .quote-icon { color: var(--accent); width: 32px; height: 32px; margin-bottom: 1rem; }
+    .stars { display: flex; gap: 0.25rem; margin-bottom: 0.5rem; }
+    .star { width: 16px; height: 16px; color: var(--accent); fill: var(--accent); }
+    
+    /* Result cards */
+    .result-card {
+      background: rgba(11,15,28,0.7); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 22px;
+      padding: 1.25rem; card-shadow; transition: all 0.3s; cursor: pointer;
+    }
+    .result-card:hover { background: rgba(11,15,28,0.9); transform: translateY(-4px); }
+    .result-icon-box { width: 48px; height: 48px; background: rgba(225,29,46,0.2); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;
+    }
+    .result-icon-box svg { width: 24px; height: 24px; color: var(--accent); }
+    .result-stat { font-size: 2rem; font-weight: 800; color: white; margin-bottom: 0.25rem; }
+    
+    /* Form card */
+    .form-card {
+      background: rgba(11,15,28,0.8); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 22px;
+      padding: 1.5rem; card-shadow; overflow-y: auto; max-height: 64vh;
+    }
+    .form-card h3 { font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.375rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 0.625rem 1rem; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white;
+      font-size: 0.875rem; transition: all 0.3s;
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.4); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(225,29,46,0.2);
+    }
+    .form-group select option { background: var(--bg-primary); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    
+    /* Contact section (light bg) */
+    .contact-section { background: var(--bg-secondary); padding: 5rem 0; position: relative; }
+    .contact-section .diagonal { position: absolute; top: 0; right: 0; width: 33%; height: 100%;
+      background: linear-gradient(to bottom left, rgba(30,58,138,0.08), transparent); pointer-events: none;
+    }
+    .contact-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+    @media (max-width: 1024px) { .contact-grid { grid-template-columns: 1fr; } }
+    
+    .contact-card { background: white; border-radius: 1rem; padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #f0f0f0;
+    }
+    .contact-card h4 { color: var(--bg-primary); font-weight: 700; margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .contact-card h4 svg { color: var(--accent); }
+    .address-item { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem; }
+    .address-icon { width: 40px; height: 40px; background: rgba(225,29,46,0.1); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .address-icon svg { color: var(--accent); width: 20px; height: 20px; }
+    .address-text h5 { color: var(--bg-primary); font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; }
+    .address-text p { color: #4A5570; font-size: 0.8rem; line-height: 1.5; }
+    
+    .phone-item { display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem; background: #f8f9fa; border-radius: 0.75rem;
+      margin-bottom: 0.75rem; text-decoration: none; transition: all 0.3s;
+    }
+    .phone-item:hover { background: rgba(225,29,46,0.05); }
+    .phone-left { display: flex; align-items: center; gap: 0.75rem; }
+    .phone-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .phone-icon svg { color: white; width: 18px; height: 18px; }
+    .phone-info p { color: var(--bg-primary); font-weight: 600; font-size: 0.875rem; }
+    .phone-info span { color: #4A5570; font-size: 0.75rem; }
+    .phone-link { color: var(--accent); font-size: 0.75rem; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
+    .phone-item:hover .phone-link { opacity: 1; }
+    
+    .contact-form-light .form-group input, .contact-form-light .form-group select, .contact-form-light .form-group textarea {
+      background: #f8f9fa; border-color: #e5e7eb; color: var(--bg-primary);
+    }
+    .contact-form-light .form-group input::placeholder, .contact-form-light .form-group textarea::placeholder { color: #9ca3af; }
+    .contact-form-light .form-group label { color: #4A5570; }
+    
+    .map-container { background: white; border-radius: 1rem; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #f0f0f0;
+    }
+    .map-container .map-header { padding: 1rem 1.25rem; border-bottom: 1px solid #f0f0f0; }
+    .map-container .map-header h4 { color: var(--bg-primary); font-weight: 700;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .map-container .map-header h4 svg { color: var(--accent); }
+    .map-frame { width: 100%; height: 250px; border: none; }
+    
+    .hours-row { display: flex; justify-content: space-between; padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-row span:first-child { color: #4A5570; }
+    .hours-row span:last-child { color: var(--bg-primary); font-weight: 600; }
+    .hours-row .closed { color: var(--accent); }
+    
+    /* Tags */
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag { padding: 0.375rem 0.875rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 9999px; font-size: 0.875rem; color: rgba(255,255,255,0.8);
+    }
+    .tag-red { background: rgba(225,29,46,0.2); border-color: rgba(225,29,46,0.4); color: white; font-weight: 500; }
+    
+    /* WhatsApp button */
+    .whatsapp-btn {
+      position: fixed; bottom: 24px; right: 24px; z-index: 50;
+      width: 56px; height: 56px; background: #25D366; color: white;
+      border-radius: 50%; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s;
+    }
+    .whatsapp-btn:hover { transform: scale(1.1); background: #128C7E; }
+    .whatsapp-btn svg { width: 28px; height: 28px; }
+    
+    /* Dialog */
+    .dialog-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+    }
+    .dialog-overlay.active { display: flex; }
+    .dialog { background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 1rem; padding: 2rem; max-width: 420px; width: 90%; text-align: center;
+    }
+    .dialog h3 { color: var(--accent); font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .dialog p { color: var(--text-secondary); margin-bottom: 1.5rem; }
+    
+    /* Animations */
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-float-d1 { animation: float 4s ease-in-out infinite; animation-delay: 1s; }
+    .animate-float-d2 { animation: float 4s ease-in-out infinite; animation-delay: 2s; }
+    
+    /* Mobile cards horizontal scroll */
+    .mobile-scroll { display: none; }
+    @media (max-width: 1024px) {
+      .mobile-scroll { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem;
+        position: absolute; bottom: 2rem; left: 0; right: 0; padding: 0 2rem;
+        scrollbar-width: none;
+      }
+      .mobile-scroll::-webkit-scrollbar { display: none; }
+      .mobile-card { flex-shrink: 0; }
+    }
+    
+    /* Section header center */
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-header h2 { margin-bottom: 1rem; }
+    .section-header p { color: #4A5570; font-size: 1.125rem; max-width: 600px; margin: 0 auto; }
+    
+    /* Footer */
+    .footer { background: var(--bg-primary); padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05); }
+    .footer-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .footer-logo .icon { width: 36px; height: 36px; background: var(--accent); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .footer-logo span { font-weight: 700; color: white; }
+    .footer-text { color: var(--text-secondary); font-size: 0.875rem; }
+    @media (max-width: 768px) {
+      .footer-container { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Noise Overlay -->
+  <div class="noise-overlay"></div>
+  
+  <!-- Navigation -->
+  <nav class="nav-sticky" id="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo">
+        <div class="nav-logo-icon">
+          <i data-lucide="graduation-cap"></i>
+        </div>
+        <span class="nav-logo-text">Sharma Classes</span>
+      </a>
+      <div class="nav-links">
+        <a href="#courses">Courses</a>
+        <a href="#subjects">Subjects</a>
+        <a href="#admissions">Admissions</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <a href="#admissions" class="btn-primary nav-cta">Enroll Now</a>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#courses" onclick="toggleMobileMenu()">Courses</a>
+      <a href="#subjects" onclick="toggleMobileMenu()">Subjects</a>
+      <a href="#admissions" onclick="toggleMobileMenu()">Admissions</a>
+      <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
+      <a href="#admissions" class="btn-primary" style="margin-top:1rem;justify-content:center;" onclick="toggleMobileMenu()">Enroll Now</a>
+    </div>
+  </nav>
+
+  <!-- Section 1: Hero -->
+  <section id="hero" class="section-pinned" style="z-index:10;">
+    <div class="bg-image">
+      <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1920&q=80" alt="Classroom">
+      <div class="overlay"></div>
+    </div>
+    <div class="blue-stage" id="heroPanel"></div>
+    <div class="red-ribbon" style="width:28vw;" id="heroRibbon">
+      <span>Sharma Classes</span>
+    </div>
+    <div class="content-wrapper">
+      <div class="content-left" style="opacity:0;" id="heroContent">
+        <h1 class="hero-title" style="margin-bottom:1.5rem;">
+          <span style="display:block;">Scripting</span>
+          <span class="text-gradient" style="display:block;">Success Stories</span>
+        </h1>
+        <p class="text-secondary" style="font-size:1.125rem;max-width:28rem;margin-bottom:2rem;">
+          Excellent coaching for XI–XII, undergrad & competitive exams.
+        </p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <a href="#admissions" class="btn-primary">
+            Enroll Now <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+          </a>
+          <a href="#contact" class="btn-secondary">
+            <i data-lucide="phone" style="width:16px;height:16px;"></i> Contact Us
+          </a>
+        </div>
+      </div>
+      <div class="content-right card-stage">
+        <div class="student-cards-container" id="heroCards">
+          <div class="student-card sc-1 animate-float" style="opacity:0;">
+            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80" alt="Student">
+            <div class="card-overlay"></div>
+          </div>
+          <div class="student-card sc-2 animate-float-d1" style="opacity:0;">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="Student">
+            <div class="card-overlay"></div>
+          </div>
+          <div class="student-card sc-3 animate-float-d2" style="opacity:0;">
+            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80" alt="Student">
+            <div class="card-overlay"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:2rem;right:2rem;color:rgba(255,255,255,0.5);font-size:0.875rem;">Established 1998</div>
+  </section>
+
+  <!-- Section 2: Courses -->
+  <section id="courses" class="section-pinned" style="z-index:20;">
+    <div class="bg-image">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80" alt="Study">
+      <div class="overlay"></div>
+    </div>
+    <div class="blue-stage" id="coursesPanel"></div>
+    <div class="red-ribbon" style="width:22vw;" id="coursesRibbon">
+      <span>Courses</span>
+    </div>
+    <div class="content-wrapper">
+      <div class="content-left" style="opacity:0;" id="coursesContent">
+        <h2 class="section-title" style="margin-bottom:1rem;">
+          What We <span class="text-gradient">Offer</span>
+        </h2>
+        <p class="text-secondary" style="font-size:1.125rem;max-width:28rem;margin-bottom:2rem;">
+          From school foundations to entrance exams—structured batches, focused material, and regular assessments.
+        </p>
+        <a href="#admissions" class="btn-primary">
+          Explore All Courses <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+        </a>
+      </div>
+      <div class="content-right card-stage">
+        <div class="cards-grid" id="coursesCards">
+          <div class="cards-grid-inner grid-2x2">
+            <div class="item-card animate-float" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&q=80" alt="XI-XII">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="book-open"></i></div>
+                <h3 style="color:white;font-weight:700;">XI–XII Coaching</h3>
+                <p style="color:var(--text-secondary);font-size:0.8rem;">Comprehensive preparation</p>
+              </div>
+            </div>
+            <div class="item-card animate-float-d1" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&q=80" alt="BA BCom">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="graduation-cap"></i></div>
+                <h3 style="color:white;font-weight:700;">B.A., B.Com</h3>
+                <p style="color:var(--text-secondary);font-size:0.8rem;">Undergraduate programs</p>
+              </div>
+            </div>
+            <div class="item-card animate-float-d2" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&q=80" alt="Medical">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="stethoscope"></i></div>
+                <h3 style="color:white;font-weight:700;">Medical / Engineering</h3>
+                <p style="color:var(--text-secondary);font-size:0.8rem;">Entrance exam preparation</p>
+              </div>
+            </div>
+            <div class="item-card animate-float" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&q=80" alt="Law">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="scale"></i></div>
+                <h3 style="color:white;font-weight:700;">Law Entrance</h3>
+                <p style="color:var(--text-secondary);font-size:0.8rem;">CLAT and law school prep</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile cards -->
+    <div class="mobile-scroll">
+      <div class="mobile-card item-card" style="width:16rem;height:10rem;">
+        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&q=80" alt="">
+        <div class="card-overlay"></div>
+        <div class="card-content"><h3 style="color:white;font-size:0.875rem;font-weight:700;">XI–XII Coaching</h3></div>
+      </div>
+      <div class="mobile-card item-card" style="width:16rem;height:10rem;">
+        <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&q=80" alt="">
+        <div class="card-overlay"></div>
+        <div class="card-content"><h3 style="color:white;font-size:0.875rem;font-weight:700;">B.A., B.Com</h3></div>
+      </div>
+      <div class="mobile-card item-card" style="width:16rem;height:10rem;">
+        <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&q=80" alt="">
+        <div class="card-overlay"></div>
+        <div class="card-content"><h3 style="color:white;font-size:0.875rem;font-weight:700;">Medical/Engg</h3></div>
+      </div>
+      <div class="mobile-card item-card" style="width:16rem;height:10rem;">
+        <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&q=80" alt="">
+        <div class="card-overlay"></div>
+        <div class="card-content"><h3 style="color:white;font-size:0.875rem;font-weight:700;">Law Entrance</h3></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Subjects -->
+  <section id="subjects" class="section-pinned" style="z-index:30;">
+    <div class="bg-image">
+      <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920&q=80" alt="Study">
+      <div class="overlay"></div>
+    </div>
+    <div class="blue-stage blue-stage-lg" id="subjectsPanel"></div>
+    <div class="red-ribbon" style="width:26vw;top:5vh;" id="subjectsRibbon">
+      <span>Subjects</span>
+    </div>
+    <div class="content-wrapper">
+      <div class="content-left" style="opacity:0;" id="subjectsContent">
+        <h2 class="section-title" style="margin-bottom:1rem;">
+          Subjects We <span class="text-gradient">Cover</span>
+        </h2>
+        <p class="text-secondary" style="font-size:1.125rem;max-width:28rem;margin-bottom:1.5rem;">
+          Expert faculty for every topic—concept clarity, problem solving, and exam techniques.
+        </p>
+        <div class="tags" style="margin-bottom:2rem;">
+          <span class="tag">Accountancy</span>
+          <span class="tag">Economics</span>
+          <span class="tag">Business Studies</span>
+          <span class="tag">Computer Science</span>
+          <span class="tag">Social Studies</span>
+          <span class="tag">IT</span>
+        </div>
+        <a href="#contact" class="btn-primary">
+          See Subject Details <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+        </a>
+      </div>
+      <div class="content-right card-stage">
+        <div class="cards-grid" style="top:14vh;height:70vh;" id="subjectsCards">
+          <div class="cards-grid-inner grid-3x2">
+            <div class="item-card animate-float" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&q=80" alt="Maths">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="calculator"></i></div>
+                <h3 style="color:white;font-weight:700;font-size:0.875rem;">Maths</h3>
+              </div>
+            </div>
+            <div class="item-card animate-float-d1" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&q=80" alt="Science">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="flask-conical"></i></div>
+                <h3 style="color:white;font-weight:700;font-size:0.875rem;">Science</h3>
+              </div>
+            </div>
+            <div class="item-card animate-float-d2" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&q=80" alt="English">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="book-open"></i></div>
+                <h3 style="color:white;font-weight:700;font-size:0.875rem;">English</h3>
+              </div>
+            </div>
+            <div class="item-card animate-float-d1" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400&q=80" alt="Physics">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="atom"></i></div>
+                <h3 style="color:white;font-weight:700;font-size:0.875rem;">Physics</h3>
+              </div>
+            </div>
+            <div class="item-card animate-float" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=400&q=80" alt="Chemistry">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="beaker"></i></div>
+                <h3 style="color:white;font-weight:700;font-size:0.875rem;">Chemistry</h3>
+              </div>
+            </div>
+            <div class="item-card animate-float-d2" style="opacity:0;">
+              <img src="https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=400&q=80" alt="Biology">
+              <div class="card-overlay"></div>
+              <div class="card-content">
+                <div class="icon-box"><i data-lucide="dna"></i></div>
+                <h3 style="color:white;font-weight:700;font-size:0.875rem;">Biology</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-scroll">
+      <div class="mobile-card item-card" style="width:8rem;height:10rem;"><img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&q=80" alt=""><div class="card-overlay"></div><div class="card-content"><h3 style="color:white;font-size:0.75rem;font-weight:700;">Maths</h3></div></div>
+      <div class="mobile-card item-card" style="width:8rem;height:10rem;"><img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&q=80" alt=""><div class="card-overlay"></div><div class="card-content"><h3 style="color:white;font-size:0.75rem;font-weight:700;">Science</h3></div></div>
+      <div class="mobile-card item-card" style="width:8rem;height:10rem;"><img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&q=80" alt=""><div class="card-overlay"></div><div class="card-content"><h3 style="color:white;font-size:0.75rem;font-weight:700;">English</h3></div></div>
+      <div class="mobile-card item-card" style="width:8rem;height:10rem;"><img src="https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=400&q=80" alt=""><div class="card-overlay"></div><div class="card-content"><h3 style="color:white;font-size:0.75rem;font-weight:700;">Physics</h3></div></div>
+      <div class="mobile-card item-card" style="width:8rem;height:10rem;"><img src="https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=400&q=80" alt=""><div class="card-overlay"></div><div class="card-content"><h3 style="color:white;font-size:0.75rem;font-weight:700;">Chemistry</h3></div></div>
+      <div class="mobile-card item-card" style="width:8rem;height:10rem;"><img src="https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=400&q=80" alt=""><div class="card-overlay"></div><div class="card-content"><h3 style="color:white;font-size:0.75rem;font-weight:700;">Biology</h3></div></div>
+    </div>
+  </section>
+
+  <!-- Section 4: Admissions -->
+  <section id="admissions" class="section-pinned" style="z-index:40;">
+    <div class="bg-image">
+      <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920&q=80" alt="Admissions">
+      <div class="overlay"></div>
+    </div>
+    <div class="blue-stage" id="admissionsPanel"></div>
+    <div class="red-ribbon" style="width:30vw;" id="admissionsRibbon">
+      <span>Admissions</span>
+    </div>
+    <div class="content-wrapper">
+      <div class="content-left" style="opacity:0;" id="admissionsContent">
+        <h2 class="section-title" style="margin-bottom:1rem;">
+          Admissions <span class="text-gradient">Open</span>
+        </h2>
+        <p class="text-secondary" style="font-size:1.125rem;max-width:28rem;margin-bottom:1.5rem;">
+          Join Open School, JBT, or B.Ed. pathways. Fill the form and we'll guide your next step.
+        </p>
+        <div class="tags" style="margin-bottom:2rem;">
+          <span class="tag tag-red">Open School</span>
+          <span class="tag tag-red">JBT</span>
+          <span class="tag tag-red">B.Ed.</span>
+        </div>
+        <a href="#contact" class="btn-primary">
+          <i data-lucide="phone" style="width:16px;height:16px;"></i> Request a Callback
+        </a>
+      </div>
+      <div class="content-right card-stage">
+        <div style="position:absolute;left:6vw;top:16vh;width:38vw;height:64vh;transform-style:preserve-3d;" id="admissionsForm">
+          <div class="form-card" style="opacity:0;">
+            <h3><i data-lucide="send" style="color:var(--accent);width:20px;height:20px;"></i> Submit Inquiry</h3>
+            <form onsubmit="handleFormSubmit(event)">
+              <div class="form-group">
+                <label><i data-lucide="user" style="width:14px;height:14px;"></i> Full Name</label>
+                <input type="text" name="name" placeholder="Enter your name" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label><i data-lucide="mail" style="width:14px;height:14px;"></i> Email</label>
+                  <input type="email" name="email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                  <label><i data-lucide="phone" style="width:14px;height:14px;"></i> Phone</label>
+                  <input type="tel" name="phone" placeholder="+91XXXXXXXXXX" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="book-open" style="width:14px;height:14px;"></i> Course Interest</label>
+                <select name="course" required>
+                  <option value="">Select a course</option>
+                  <option value="xi_xii">XI-XII Coaching</option>
+                  <option value="ba_bcom">B.A., B.Com</option>
+                  <option value="medical">Medical Entrance</option>
+                  <option value="engineering">Engineering Entrance</option>
+                  <option value="law">Law Entrance</option>
+                  <option value="open_school">Open School</option>
+                  <option value="jbt">JBT</option>
+                  <option value="bed">B.Ed.</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="message-square" style="width:14px;height:14px;"></i> Message</label>
+                <textarea name="message" rows="2" placeholder="Any questions or specific requirements..."></textarea>
+              </div>
+              <button type="submit" class="btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;">
+                <i data-lucide="send" style="width:16px;height:16px;"></i> Submit Inquiry
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Testimonials -->
+  <section id="testimonials" class="section-pinned" style="z-index:50;">
+    <div class="bg-image">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80" alt="Students">
+      <div class="overlay"></div>
+    </div>
+    <div class="blue-stage" id="testimonialsPanel"></div>
+    <div class="red-ribbon" style="width:32vw;" id="testimonialsRibbon">
+      <span>Testimonials</span>
+    </div>
+    <div class="content-wrapper">
+      <div class="content-left" style="opacity:0;" id="testimonialsContent">
+        <h2 class="section-title" style="margin-bottom:1rem;">
+          What Students <span class="text-gradient">Say</span>
+        </h2>
+        <p class="text-secondary" style="font-size:1.125rem;max-width:28rem;margin-bottom:2rem;">
+          Hear from the people who've been where you are—and came out stronger.
+        </p>
+        <a href="#contact" class="btn-primary">
+          Read More Stories <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+        </a>
+      </div>
+      <div class="content-right card-stage">
+        <div style="position:absolute;left:4vw;top:16vh;width:42vw;height:64vh;transform-style:preserve-3d;" id="testimonialsCards">
+          <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1rem;height:100%;">
+            <div class="testimonial-card animate-float" style="opacity:0;">
+              <div>
+                <i data-lucide="quote" class="quote-icon"></i>
+                <p style="color:white;font-size:1.05rem;font-weight:500;line-height:1.6;margin-bottom:1rem;">"The faculty made concepts feel simple. My confidence improved within weeks."</p>
+              </div>
+              <div>
+                <div class="stars">
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                </div>
+                <h4 style="color:white;font-weight:700;">Priya Sharma</h4>
+                <p style="color:var(--text-secondary);font-size:0.875rem;">XI-XII Student</p>
+              </div>
+            </div>
+            <div class="testimonial-card animate-float-d1" style="opacity:0;">
+              <div>
+                <i data-lucide="quote" class="quote-icon"></i>
+                <p style="color:white;font-size:0.95rem;font-weight:500;line-height:1.6;margin-bottom:1rem;">"Regular tests and feedback kept me on track. Worth every bit of effort."</p>
+              </div>
+              <div>
+                <div class="stars">
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                </div>
+                <h4 style="color:white;font-weight:700;">Rahul Kumar</h4>
+                <p style="color:var(--text-secondary);font-size:0.875rem;">Medical Aspirant</p>
+              </div>
+            </div>
+            <div class="testimonial-card animate-float-d2" style="grid-column:span 2;opacity:0;">
+              <div>
+                <i data-lucide="quote" class="quote-icon"></i>
+                <p style="color:white;font-size:1.05rem;font-weight:500;line-height:1.6;margin-bottom:1rem;">"I finally understood how to study smart, not just hard. The personalized attention made all the difference."</p>
+              </div>
+              <div>
+                <div class="stars">
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                  <i data-lucide="star" class="star"></i>
+                </div>
+                <h4 style="color:white;font-weight:700;">Ankit Patel</h4>
+                <p style="color:var(--text-secondary);font-size:0.875rem;">Engineering Student</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-scroll">
+      <div class="testimonial-card mobile-card" style="width:18rem;flex-shrink:0;">
+        <i data-lucide="quote" style="color:var(--accent);width:24px;height:24px;margin-bottom:0.75rem;"></i>
+        <p style="color:white;font-size:0.875rem;margin-bottom:0.75rem;">"The faculty made concepts feel simple."</p>
+        <h4 style="color:white;font-weight:700;font-size:0.875rem;">Priya Sharma</h4>
+      </div>
+      <div class="testimonial-card mobile-card" style="width:18rem;flex-shrink:0;">
+        <i data-lucide="quote" style="color:var(--accent);width:24px;height:24px;margin-bottom:0.75rem;"></i>
+        <p style="color:white;font-size:0.875rem;margin-bottom:0.75rem;">"Regular tests kept me on track."</p>
+        <h4 style="color:white;font-weight:700;font-size:0.875rem;">Rahul Kumar</h4>
+      </div>
+      <div class="testimonial-card mobile-card" style="width:18rem;flex-shrink:0;">
+        <i data-lucide="quote" style="color:var(--accent);width:24px;height:24px;margin-bottom:0.75rem;"></i>
+        <p style="color:white;font-size:0.875rem;margin-bottom:0.75rem;">"I learned to study smart."</p>
+        <h4 style="color:white;font-weight:700;font-size:0.875rem;">Ankit Patel</h4>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Results -->
+  <section id="results" class="section-pinned" style="z-index:60;">
+    <div class="bg-image">
+      <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&q=80" alt="Results">
+      <div class="overlay"></div>
+    </div>
+    <div class="blue-stage" id="resultsPanel"></div>
+    <div class="red-ribbon" style="width:26vw;" id="resultsRibbon">
+      <span>Results</span>
+    </div>
+    <div class="content-wrapper">
+      <div class="content-left" style="opacity:0;" id="resultsContent">
+        <h2 class="section-title" style="margin-bottom:1rem;">
+          Proven <span class="text-gradient">Results</span>
+        </h2>
+        <p class="text-secondary" style="font-size:1.125rem;max-width:28rem;margin-bottom:1.5rem;">
+          Year after year, our students secure top ranks and admissions in premier colleges.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:2rem;">
+          <span class="tag" style="display:flex;align-items:center;gap:0.5rem;">
+            <i data-lucide="award" style="width:16px;height:16px;color:var(--accent);"></i> Best Coaching 2023
+          </span>
+          <span class="tag" style="display:flex;align-items:center;gap:0.5rem;">
+            <i data-lucide="target" style="width:16px;height:16px;color:var(--accent);"></i> 100% XII Results
+          </span>
+          <span class="tag" style="display:flex;align-items:center;gap:0.5rem;">
+            <i data-lucide="book-open" style="width:16px;height:16px;color:var(--accent);"></i> 25+ Years
+          </span>
+        </div>
+        <a href="#admissions" class="btn-primary">
+          Join the Next Batch <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+        </a>
+      </div>
+      <div class="content-right card-stage">
+        <div style="position:absolute;left:4vw;top:16vh;width:42vw;height:64vh;transform-style:preserve-3d;" id="resultsCards">
+          <div class="cards-grid-inner grid-3x1">
+            <div class="result-card animate-float" style="opacity:0;">
+              <div class="result-icon-box"><i data-lucide="trophy"></i></div>
+              <div class="result-stat">500+</div>
+              <h3 style="color:white;font-weight:700;margin-bottom:0.5rem;">Top Ranks</h3>
+              <p style="color:var(--text-secondary);font-size:0.875rem;">Consistent top 100 ranks in competitive exams</p>
+              <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1);">
+                <span style="color:var(--accent);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">Top Rankers</span>
+              </div>
+            </div>
+            <div class="result-card animate-float-d1" style="opacity:0;">
+              <div class="result-icon-box"><i data-lucide="trending-up"></i></div>
+              <div class="result-stat">95%</div>
+              <h3 style="color:white;font-weight:700;margin-bottom:0.5rem;">Success Rate</h3>
+              <p style="color:var(--text-secondary);font-size:0.875rem;">Consistent results year after year</p>
+              <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1);">
+                <span style="color:var(--accent);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">Success Rate</span>
+              </div>
+            </div>
+            <div class="result-card animate-float-d2" style="opacity:0;">
+              <div class="result-icon-box"><i data-lucide="users"></i></div>
+              <div class="result-stat">10K+</div>
+              <h3 style="color:white;font-weight:700;margin-bottom:0.5rem;">Alumni Network</h3>
+              <p style="color:var(--text-secondary);font-size:0.875rem;">Strong network of successful graduates</p>
+              <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1);">
+                <span style="color:var(--accent);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">Alumni</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-scroll">
+      <div class="result-card mobile-card" style="width:12rem;flex-shrink:0;">
+        <div class="result-icon-box"><i data-lucide="trophy"></i></div>
+        <div class="result-stat">500+</div>
+        <h3 style="color:white;font-size:0.875rem;font-weight:700;">Top Ranks</h3>
+      </div>
+      <div class="result-card mobile-card" style="width:12rem;flex-shrink:0;">
+        <div class="result-icon-box"><i data-lucide="trending-up"></i></div>
+        <div class="result-stat">95%</div>
+        <h3 style="color:white;font-size:0.875rem;font-weight:700;">Success Rate</h3>
+      </div>
+      <div class="result-card mobile-card" style="width:12rem;flex-shrink:0;">
+        <div class="result-icon-box"><i data-lucide="users"></i></div>
+        <div class="result-stat">10K+</div>
+        <h3 style="color:white;font-size:0.875rem;font-weight:700;">Alumni</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: Contact -->
+  <section id="contact" class="contact-section" style="z-index:70;">
+    <div class="diagonal"></div>
+    <div class="contact-container">
+      <div class="section-header">
+        <h2 class="section-title" style="color:var(--bg-primary);">
+          Get in <span style="color:var(--accent);">Touch</span>
+        </h2>
+        <p>Visit us, call, or send a message. We're here to help you choose the right path.</p>
+      </div>
+      <div class="contact-grid">
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+          <!-- Addresses -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="contact-card">
+              <div class="address-item">
+                <div class="address-icon"><i data-lucide="map-pin"></i></div>
+                <div class="address-text">
+                  <h5>Shastri Nagar</h5>
+                  <p>E-82, Near PNB, Opp. Metro Pillar No: 174, Shastri Nagar, Delhi – 110052</p>
+                </div>
+              </div>
+            </div>
+            <div class="contact-card">
+              <div class="address-item">
+                <div class="address-icon"><i data-lucide="map-pin"></i></div>
+                <div class="address-text">
+                  <h5>Kishan Ganj</h5>
+                  <p>19, Rama Park, Near Jaipur Golden Transport, Above Akash Dairy, Kishan Ganj, Delhi – 110007</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Phone Numbers -->
+          <div class="contact-card">
+            <h4><i data-lucide="phone"></i> Contact Numbers</h4>
+            <a href="tel:9968294774" class="phone-item">
+              <div class="phone-left">
+                <div class="phone-icon"><i data-lucide="phone"></i></div>
+                <div class="phone-info"><p>9968294774</p><span>Sharma Sir</span></div>
+              </div>
+              <span class="phone-link">Call</span>
+            </a>
+            <a href="tel:7982435981" class="phone-item">
+              <div class="phone-left">
+                <div class="phone-icon"><i data-lucide="phone"></i></div>
+                <div class="phone-info"><p>7982435981</p><span>Jitender Tiwari Sir</span></div>
+              </div>
+              <span class="phone-link">Call</span>
+            </a>
+            <a href="https://wa.me/9971464327" target="_blank" class="phone-item">
+              <div class="phone-left">
+                <div class="phone-icon" style="background:#25D366;"><i data-lucide="message-circle"></i></div>
+                <div class="phone-info"><p>9971464327</p><span>WhatsApp</span></div>
+              </div>
+              <span class="phone-link">Chat</span>
+            </a>
+          </div>
+          <!-- Contact Form -->
+          <div class="contact-card contact-form-light">
+            <h4><i data-lucide="mail"></i> Send Message</h4>
+            <form onsubmit="handleContactSubmit(event)">
+              <div class="form-group">
+                <label><i data-lucide="user" style="width:14px;height:14px;"></i> Name</label>
+                <input type="text" name="name" placeholder="Your name" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label><i data-lucide="mail" style="width:14px;height:14px;"></i> Email</label>
+                  <input type="email" name="email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                  <label><i data-lucide="phone" style="width:14px;height:14px;"></i> Phone</label>
+                  <input type="tel" name="phone" placeholder="+91XXXXXXXXXX" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="message-square" style="width:14px;height:14px;"></i> Message</label>
+                <textarea name="message" rows="3" placeholder="Your message..."></textarea>
+              </div>
+              <button type="submit" class="btn-primary" style="width:100%;justify-content:center;background:var(--accent);margin-top:0.5rem;">
+                <i data-lucide="send" style="width:16px;height:16px;"></i> Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+          <!-- Maps -->
+          <div class="map-container">
+            <div class="map-header">
+              <h4><i data-lucide="map-pin"></i> Shastri Nagar Center</h4>
+            </div>
+            <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.9!2d77.1809!3d28.6695!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDQwJzEwLjIiTiA3N8KwMTAnNTEuMiJF!5e0!3m2!1sen!2sin" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="map-container">
+            <div class="map-header">
+              <h4><i data-lucide="map-pin"></i> Kishan Ganj Center</h4>
+            </div>
+            <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.5!2d77.2!3d28.66!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDM5JzM2LjAiTiA3N8KwMTInMDAuMCJF!5e0!3m2!1sen!2sin" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <!-- Working Hours -->
+          <div class="contact-card">
+            <h4><i data-lucide="clock"></i> Working Hours</h4>
+            <div class="hours-row"><span>Monday - Saturday</span><span>8:00 AM - 8:00 PM</span></div>
+            <div class="hours-row"><span>Sunday</span><span class="closed">Closed</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo">
+        <div class="icon"><i data-lucide="graduation-cap" style="color:white;width:20px;height:20px;"></i></div>
+        <span>Sharma Classes</span>
+      </div>
+      <p class="footer-text">Scripting Success Stories since 1998</p>
+      <p class="footer-text"> All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- WhatsApp Button -->
+  <button class="whatsapp-btn" onclick="openWhatsApp()" aria-label="Contact on WhatsApp">
+    <i data-lucide="message-circle"></i>
+  </button>
+
+  <!-- Success Dialog -->
+  <div class="dialog-overlay" id="successDialog">
+    <div class="dialog">
+      <h3>Submitted!</h3>
+      <p>Thank you for your interest. Our team will contact you within 24 hours.</p>
+      <button class="btn-primary" style="justify-content:center;" onclick="closeDialog()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    document.addEventListener('DOMContentLoaded', function() {
+      lucide.createIcons();
+      initAnimations();
+      initNavigation();
+    });
+
+    // Navigation scroll effect
+    function initNavigation() {
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 100) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      }, { passive: true });
+    }
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu').classList.toggle('active');
+    }
+
+    // GSAP Animations
+    function initAnimations() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero entrance animation (auto-play on load)
+      const heroTl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+      heroTl.to('#heroPanel', { opacity: 1, scale: 1, y: 0, duration: 0.8 }, 0);
+      heroTl.to('#heroRibbon', { x: 0, opacity: 1, duration: 0.6 }, 0.2);
+      heroTl.to('#heroContent', { y: 0, opacity: 1, duration: 0.6 }, 0.3);
+      heroTl.to('#heroCards .student-card', { x: 0, rotateY: -12, opacity: 1, duration: 0.7, stagger: 0.12 }, 0.4);
+
+      // Set initial states for hero
+      gsap.set('#heroPanel', { opacity: 0, scale: 0.96, y: '6vh' });
+      gsap.set('#heroRibbon', { x: '-12vw', opacity: 0 });
+      gsap.set('#heroContent', { y: 24, opacity: 0 });
+      gsap.set('#heroCards .student-card', { x: '18vw', rotateY: -28, opacity: 0 });
+
+      // Pinned sections configuration
+      const sections = [
+        { id: 'hero', panel: '#heroPanel', ribbon: '#heroRibbon', content: '#heroContent', cards: '#heroCards .student-card', contentX: '-18vw', cardsX: '18vw', cardsRotate: -28 },
+        { id: 'courses', panel: '#coursesPanel', ribbon: '#coursesRibbon', content: '#coursesContent', cards: '#coursesCards .item-card', contentX: '-14vw', cardsX: '16vw', cardsRotate: -26 },
+        { id: 'subjects', panel: '#subjectsPanel', ribbon: '#subjectsRibbon', content: '#subjectsContent', cards: '#subjectsCards .item-card', contentX: '-14vw', cardsX: '16vw', cardsRotate: -28 },
+        { id: 'admissions', panel: '#admissionsPanel', ribbon: '#admissionsRibbon', content: '#admissionsContent', cards: '#admissionsForm .form-card', contentX: '-14vw', cardsX: '16vw', cardsRotate: -22 },
+        { id: 'testimonials', panel: '#testimonialsPanel', ribbon: '#testimonialsRibbon', content: '#testimonialsContent', cards: '#testimonialsCards .testimonial-card', contentX: '-14vw', cardsX: '16vw', cardsRotate: -24 },
+        { id: 'results', panel: '#resultsPanel', ribbon: '#resultsRibbon', content: '#resultsContent', cards: '#resultsCards .result-card', contentX: '-14vw', cardsX: '16vw', cardsRotate: -24 },
+      ];
+
+      sections.forEach((sec, index) => {
+        if (index === 0) {
+          // Hero section - scroll handles exit only
+          const heroScrollTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: '#' + sec.id,
+              start: 'top top',
+              end: '+=130%',
+              pin: true,
+              scrub: 0.6,
+              onLeaveBack: function() {
+                gsap.set(sec.panel, { opacity: 1, x: 0, y: 0, scale: 1 });
+                gsap.set(sec.ribbon, { opacity: 1, x: 0, y: 0 });
+                gsap.set(sec.content, { opacity: 1, x: 0 });
+                gsap.set(sec.cards, { opacity: 1, x: 0, rotateY: -12 });
+              }
+            }
+          });
+          // EXIT phase (70%-100%)
+          heroScrollTl.fromTo(sec.content, { x: 0, opacity: 1 }, { x: sec.contentX, opacity: 0, ease: 'power2.in' }, 0.7);
+          heroScrollTl.fromTo(sec.cards, { x: 0, rotateY: -12, opacity: 1 }, { x: sec.cardsX, rotateY: sec.cardsRotate, opacity: 0, ease: 'power2.in', stagger: 0.02 }, 0.7);
+          heroScrollTl.fromTo(sec.ribbon, { y: 0, opacity: 1 }, { y: '-10vh', opacity: 0, ease: 'power2.in' }, 0.75);
+          heroScrollTl.fromTo(sec.panel, { scale: 1, opacity: 1 }, { scale: 1.06, opacity: 0, ease: 'power2.in' }, 0.78);
+        } else {
+          // Other sections - full entrance/settle/exit
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: '#' + sec.id,
+              start: 'top top',
+              end: '+=130%',
+              pin: true,
+              scrub: 0.6,
+            }
+          });
+
+          // Set initial states
+          gsap.set(sec.panel, { opacity: 0, scale: 0.94 });
+          gsap.set(sec.ribbon, { x: '-12vw', opacity: 0 });
+          gsap.set(sec.content, { y: '8vh', opacity: 0 });
+          gsap.set(sec.cards, { x: '18vw', rotateY: sec.cardsRotate, opacity: 0 });
+
+          // ENTRANCE (0%-30%)
+          tl.to(sec.panel, { opacity: 1, scale: 1, ease: 'none' }, 0);
+          tl.to(sec.ribbon, { x: 0, opacity: 1, ease: 'none' }, 0.05);
+          tl.to(sec.content, { y: 0, opacity: 1, ease: 'none' }, 0.08);
+          tl.to(sec.cards, { x: 0, rotateY: -12, opacity: 1, ease: 'none', stagger: 0.03 }, 0.1);
+
+          // SETTLE (30%-70%) - hold
+
+          // EXIT (70%-100%)
+          tl.fromTo(sec.content, { x: 0, opacity: 1 }, { x: sec.contentX, opacity: 0, ease: 'power2.in' }, 0.7);
+          tl.fromTo(sec.cards, { x: 0, rotateY: -12, opacity: 1 }, { x: sec.cardsX, rotateY: sec.cardsRotate, opacity: 0, ease: 'power2.in', stagger: 0.02 }, 0.7);
+          tl.fromTo(sec.ribbon, { y: 0, opacity: 1 }, { y: '-8vh', opacity: 0, ease: 'power2.in' }, 0.75);
+          tl.fromTo(sec.panel, { scale: 1, opacity: 1 }, { scale: 1.05, opacity: 0, ease: 'power2.in' }, 0.78);
+        }
+      });
+
+      // Contact section (flowing, not pinned)
+      gsap.from('#contact .contact-grid > div', {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#contact',
+          start: 'top 80%',
+        }
+      });
+
+      // Global snap for pinned sections
+      setTimeout(() => {
+        const pinned = ScrollTrigger.getAll()
+          .filter(st => st.vars.pin)
+          .sort((a, b) => a.start - b.start);
+        
+        const maxScroll = ScrollTrigger.maxScroll(window);
+        if (!maxScroll || pinned.length === 0) return;
+
+        const pinnedRanges = pinned.map(st => ({
+          start: st.start / maxScroll,
+          end: (st.end ?? st.start) / maxScroll,
+          center: (st.start + ((st.end ?? st.start) - st.start) * 0.5) / maxScroll,
+        }));
+
+        ScrollTrigger.create({
+          snap: {
+            snapTo: (value) => {
+              const inPinned = pinnedRanges.some(r => value >= r.start - 0.02 && value <= r.end + 0.02);
+              if (!inPinned) return value;
+              const target = pinnedRanges.reduce((closest, r) =>
+                Math.abs(r.center - value) < Math.abs(closest - value) ? r.center : closest,
+                pinnedRanges[0]?.center ?? 0
+              );
+              return target;
+            },
+            duration: { min: 0.15, max: 0.35 },
+            delay: 0,
+            ease: 'power2.out',
+          },
+        });
+      }, 100);
+    }
+
+    // Form handlers
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      document.getElementById('successDialog').classList.add('active');
+      e.target.reset();
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      document.getElementById('successDialog').classList.add('active');
+      e.target.reset();
+    }
+
+    function closeDialog() {
+      document.getElementById('successDialog').classList.remove('active');
+    }
+
+    // Close dialog on overlay click
+    document.getElementById('successDialog').addEventListener('click', function(e) {
+      if (e.target === this) closeDialog();
+    });
+
+    // WhatsApp
+    function openWhatsApp() {
+      const message = encodeURIComponent('Hello! I would like to know more about Sharma Classes.');
+      window.open('https://wa.me/9971464327?text=' + message, '_blank');
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
